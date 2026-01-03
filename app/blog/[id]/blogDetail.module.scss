@@ -1,0 +1,389 @@
+.main {
+  min-height: 100vh;
+  background: white;
+  padding: 40px 0;
+
+  :global(.dark) & {
+    background: #1a1d29;
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 100px 20px;
+  font-size: 18px;
+  color: #666;
+
+  :global(.dark) & {
+    color: #a8aab0;
+  }
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 30px;
+
+  :global(.dark) & {
+    background: #2d3142;
+    border-color: #3d4152;
+    color: #a8aab0;
+  }
+
+  &:hover {
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateX(-4px);
+
+    :global(.dark) & {
+      border-color: #667eea;
+      color: #667eea;
+    }
+  }
+
+  svg {
+    font-size: 16px;
+  }
+}
+
+// Article
+.article {
+  background: white;
+  border-radius: 16px;
+  padding: 50px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 60px;
+
+  :global(.dark) & {
+    background: #2d3142;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+  }
+}
+
+.articleHeader {
+  margin-bottom: 40px;
+}
+
+.categoryBadge {
+  display: inline-block;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-transform: capitalize;
+}
+
+.articleTitle {
+  font-size: 42px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.3;
+  margin-bottom: 24px;
+
+  :global(.dark) & {
+    color: #e8eaf0;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 30px;
+  }
+}
+
+.articleMeta {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: #666;
+
+  :global(.dark) & {
+    color: #a8aab0;
+  }
+
+  svg {
+    font-size: 16px;
+  }
+}
+
+.articleTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: #f5f5f5;
+  color: #666;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+
+  :global(.dark) & {
+    background: #3d4152;
+    color: #a8aab0;
+  }
+
+  svg {
+    font-size: 13px;
+  }
+}
+
+.featuredImage {
+  margin-bottom: 40px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  :global(.dark) & {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+// Article Content Styles
+.articleContent {
+  font-size: 17px;
+  line-height: 1.8;
+  color: #333;
+
+  :global(.dark) & {
+    color: #e8eaf0;
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #667eea;
+
+    :global(.dark) & {
+      color: #e8eaf0;
+    }
+  }
+
+  h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #444;
+    margin-top: 30px;
+    margin-bottom: 16px;
+
+    :global(.dark) & {
+      color: #d8dae0;
+    }
+  }
+
+  p {
+    margin-bottom: 20px;
+    line-height: 1.8;
+  }
+
+  ul, ol {
+    margin-bottom: 24px;
+    padding-left: 30px;
+  }
+
+  li {
+    margin-bottom: 12px;
+    line-height: 1.7;
+  }
+
+  strong {
+    font-weight: 700;
+    color: #667eea;
+  }
+
+  code {
+    background: #f5f5f5;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 15px;
+    color: #e83e8c;
+
+    :global(.dark) & {
+      background: #3d4152;
+      color: #ff6b9d;
+    }
+  }
+
+  pre {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 24px;
+
+    :global(.dark) & {
+      background: #1a1d29;
+    }
+
+    code {
+      background: none;
+      padding: 0;
+      color: #333;
+
+      :global(.dark) & {
+        color: #e8eaf0;
+      }
+    }
+  }
+
+  blockquote {
+    border-left: 4px solid #667eea;
+    padding-left: 20px;
+    margin: 24px 0;
+    font-style: italic;
+    color: #666;
+
+    :global(.dark) & {
+      color: #a8aab0;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 24px 0;
+  }
+}
+
+// Related Posts
+.relatedSection {
+  margin-top: 60px;
+}
+
+.relatedTitle {
+  font-size: 30px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px;
+
+  :global(.dark) & {
+    color: #e8eaf0;
+  }
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.relatedCard {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s;
+
+  :global(.dark) & {
+    background: #2d3142;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+
+    :global(.dark) & {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .relatedImage img {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.relatedImage {
+  height: 180px;
+  overflow: hidden;
+  background: #f5f5f5;
+
+  :global(.dark) & {
+    background: #1a1d29;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+}
+
+.relatedContent {
+  padding: 20px;
+}
+
+.relatedCardTitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  :global(.dark) & {
+    color: #e8eaf0;
+  }
+}
+
+.relatedMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #999;
+
+  :global(.dark) & {
+    color: #7a7c85;
+  }
+}
