@@ -77,7 +77,7 @@ export default function ProfilePage() {
           const courses = await userService.getUserCourses(user.taiKhoan);
           console.log('=== PROFILE: Courses from API:', courses);
           console.log('=== PROFILE: Number of courses:', courses?.length || 0);
-          Promise.resolve().then(() => setEnrolledCourses(courses || []));
+          Promise.resolve().then(() => setEnrolledCourses((courses || []) as Course[]));
         } catch (error) {
           console.error('=== PROFILE: Error fetching enrolled courses:', error);
           // Fallback to empty array if error
@@ -120,7 +120,7 @@ export default function ProfilePage() {
       // Reload courses
       const { userService } = await import('@/services/userService');
       const courses = await userService.getUserCourses(user.taiKhoan);
-      setEnrolledCourses(courses);
+      setEnrolledCourses(courses as Course[]);
       
       // Dispatch event để course detail page reload số học viên
       window.dispatchEvent(new Event('coursesUpdated'));

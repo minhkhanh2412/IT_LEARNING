@@ -7,6 +7,7 @@ export interface User {
   maLoaiNguoiDung: string; // "GV" = admin, "HV" = student
   tenLoaiNguoiDung?: string;
   accessToken?: string;
+  hinhAnh?: string;
 }
 
 export interface LoginRequest {

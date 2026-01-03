@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
@@ -17,7 +17,7 @@ const gradients = [
   'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
 ];
 
-export default function CoursesPage() {
+function CoursesContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const [courses, setCourses] = useState<Course[]>([]);
@@ -170,5 +170,13 @@ export default function CoursesPage() {
         </main>
       </div>
     </>
+  );
+}
+
+export default function CoursesPage() {
+  return (
+    <Suspense fallback={<div>Đang tải...</div>}>
+      <CoursesContent />
+    </Suspense>
   );
 }
