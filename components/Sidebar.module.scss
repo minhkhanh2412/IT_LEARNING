@@ -5,16 +5,13 @@
   width: 260px;
   height: 100vh;
   background: #ffffff;
-  border-right: 1px solid #e8e8e8;
   display: flex;
   flex-direction: column;
   padding: 24px 0;
   z-index: 1000;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
 
   :global(.dark) & {
     background: #1a1d29;
-    border-right-color: #2d3142;
   }
 
   @media (max-width: 768px) {
@@ -28,13 +25,8 @@
   align-items: center;
   gap: 12px;
   padding: 0 24px 32px;
-  border-bottom: 1px solid #e8e8e8;
   margin-bottom: 24px;
   text-decoration: none;
-
-  :global(.dark) & {
-    border-bottom-color: #2d3142;
-  }
 
   @media (max-width: 768px) {
     padding: 0 16px 24px;

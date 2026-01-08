@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import styles from './page.module.scss';
 import Sidebar from '@/components/Sidebar';
@@ -24,6 +25,15 @@ export default function Home() {
 
   useEffect(() => {
     fetchCourses();
+  }, []);
+
+  // Auto-play banner slider
+  useEffect(() => {
+    const autoPlay = setInterval(() => {
+      setCurrentSlide((prev) => (prev === 2 ? 0 : prev + 1));
+    }, 5000); // Chuyển slide mỗi 5 giây
+
+    return () => clearInterval(autoPlay);
   }, []);
 
   const fetchCourses = async () => {
@@ -57,65 +67,70 @@ export default function Home() {
                 <LeftOutlined />
               </button>
               
-              <div className={styles.heroSlide} style={{ display: currentSlide === 0 ? 'flex' : 'none' }}>
-                <div className={styles.heroContent}>
-                  <h1 className={styles.heroTitle}>Học ReactJS Miễn Phí!</h1>
-                  <p className={styles.heroText}>
-                    Khóa học ReactJS từ cơ bản tới nâng cao. Kết quả của khóa học này là bạn có thể
-                    làm hầu hết các dự án thường gặp với ReactJS.
-                  </p>
-                  <button className="btn btn-white">
-                    Đăng ký ngay
-                  </button>
-                </div>
-                <div className={styles.heroImage}>
-                  <div className={styles.reactLogo}>
-                    <svg width="180" height="180" viewBox="0 0 256 256">
-                      <circle cx="128" cy="128" r="30" fill="#61DAFB"/>
-                      <ellipse cx="128" cy="128" rx="110" ry="40" fill="none" stroke="#61DAFB" strokeWidth="10"/>
-                      <ellipse cx="128" cy="128" rx="110" ry="40" fill="none" stroke="#61DAFB" strokeWidth="10" transform="rotate(60 128 128)"/>
-                      <ellipse cx="128" cy="128" rx="110" ry="40" fill="none" stroke="#61DAFB" strokeWidth="10" transform="rotate(120 128 128)"/>
-                    </svg>
-                    <div className={styles.logoText}>React JS</div>
-                    <div className={styles.logoSubtext}>Learn once, write anywhere</div>
+              <div className={styles.slidesWrapper}>
+                <div className={`${styles.heroSlide} ${currentSlide === 0 ? styles.active : ''}`} data-gradient="blue">
+                  <div className={styles.heroContent}>
+                    <h1 className={styles.heroTitle}>Thành Quả của Học Viên</h1>
+                    <p className={styles.heroText}>
+                      Để đạt được kết quả tốt trong mọi việc ta cần xác định mục tiêu rõ ràng cho việc đó. Học lập trình cũng không là ngoại lệ.
+                    </p>
+                    <button className={styles.btnOutline}>
+                      Xem thành quả
+                    </button>
+                  </div>
+                  <div className={styles.heroImage}>
+                    <div className={styles.illustration}>
+                      <div className={styles.floatingScreens}>
+                        <div className={styles.screen}>💻</div>
+                        <div className={styles.screen}>📱</div>
+                        <div className={styles.screen}>🎨</div>
+                      </div>
+                      <div className={styles.character}>🚀</div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className={styles.heroSlide} style={{ display: currentSlide === 1 ? 'flex' : 'none' }}>
-                <div className={styles.heroContent}>
-                  <h1 className={styles.heroTitle}>HTML CSS từ Zero đến Hero</h1>
-                  <p className={styles.heroText}>
-                    Đây là khóa học đầy đủ và chi tiết nhất bạn có thể tìm thấy được ở trên Internet!
-                  </p>
-                  <button className="btn btn-white">
-                    Tìm hiểu thêm
-                  </button>
-                </div>
-                <div className={styles.heroImage}>
-                  <div className={styles.reactLogo}>
-                    <div style={{fontSize: '72px'}}>🎨</div>
-                    <div className={styles.logoText}>HTML & CSS</div>
-                    <div className={styles.logoSubtext}>From Zero to Hero</div>
+                <div className={`${styles.heroSlide} ${currentSlide === 1 ? styles.active : ''}`} data-gradient="orange">
+                  <div className={styles.heroContent}>
+                    <h1 className={styles.heroTitle}>L9 trên Youtube</h1>
+                    <p className={styles.heroText}>
+                      L9 được nhắc tới ở mọi nơi, ở đâu có cơ hội việc làm cho nghề IT và có những con người yêu thích lập trình F8 sẽ ở đó.
+                    </p>
+                    <button className={styles.btnOutline}>
+                      Truy cập kênh
+                    </button>
+                  </div>
+                  <div className={styles.heroImage}>
+                    <div className={styles.illustration}>
+                      <div className={styles.youtubeIcon}>▶️</div>
+                      <div className={styles.socialIcons}>
+                        <span>👍</span>
+                        <span>💬</span>
+                        <span>📧</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className={styles.heroSlide} style={{ display: currentSlide === 2 ? 'flex' : 'none' }}>
-                <div className={styles.heroContent}>
-                  <h1 className={styles.heroTitle}>JavaScript Cơ Bản</h1>
-                  <p className={styles.heroText}>
-                    Nắm vững JavaScript để trở thành lập trình viên Front-end chuyên nghiệp.
-                  </p>
-                  <button className="btn btn-white">
-                    Học ngay
-                  </button>
-                </div>
-                <div className={styles.heroImage}>
-                  <div className={styles.reactLogo}>
-                    <div style={{fontSize: '72px'}}>⚡</div>
-                    <div className={styles.logoText}>JavaScript</div>
-                    <div className={styles.logoSubtext}>Programming Language</div>
+                <div className={`${styles.heroSlide} ${currentSlide === 2 ? styles.active : ''}`} data-gradient="green">
+                  <div className={styles.heroContent}>
+                    <h1 className={styles.heroTitle}>Học Lập Trình Để Đi Làm</h1>
+                    <p className={styles.heroText}>
+                      Với hơn 200.000 học viên, L9 là cộng đồng học lập trình lớn nhất Việt Nam. Tham gia ngay để cùng nhau phát triển.
+                    </p>
+                    <button className={styles.btnOutline}>
+                      Tham gia ngay
+                    </button>
+                  </div>
+                  <div className={styles.heroImage}>
+                    <div className={styles.illustration}>
+                      <div className={styles.codeIcon}>👨‍💻</div>
+                      <div className={styles.techStack}>
+                        <span>⚛️</span>
+                        <span>📘</span>
+                        <span>🎯</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -146,22 +161,72 @@ export default function Home() {
                 <div className={styles.coursesGrid}>
                   {courses.map((course, index) => {
                     const gradientBg = gradients[index % gradients.length];
+                    const hasImage = course.hinhAnh && course.hinhAnh.trim() !== '';
                     
                     return (
                       <Link href={`/courses/${course.maKhoaHoc}`} key={course.maKhoaHoc} className={styles.courseCard}>
-                        <div className={styles.courseImage} style={{ background: gradientBg }}>
-                          <div className={styles.courseIcon}>
-                            {course.tenKhoaHoc.includes('C++') && 'C++'}
-                            {course.tenKhoaHoc.includes('HTML') && 'HTML'}
-                            {course.tenKhoaHoc.includes('CSS') && 'CSS'}
-                            {course.tenKhoaHoc.includes('JavaScript') && 'JS'}
-                            {course.tenKhoaHoc.includes('React') && '⚛️'}
-                            {!course.tenKhoaHoc.match(/C\+\+|HTML|CSS|JavaScript|React/) && '📚'}
+                        <div className={styles.courseImage}>
+                          {hasImage ? (
+                            <>
+                              <Image 
+                                src={course.hinhAnh} 
+                                alt={course.tenKhoaHoc}
+                                fill
+                                style={{objectFit: 'cover'}}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    parent.style.background = gradientBg;
+                                    const fallback = parent.querySelector('.fallback');
+                                    if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                                  }
+                                }}
+                              />
+                              <div className="fallback" style={{display: 'none', position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px', color: 'white'}}>
+                                <div className={styles.courseIcon}>
+                                  {course.tenKhoaHoc.includes('C++') && 'C++'}
+                                  {course.tenKhoaHoc.includes('HTML') && '🎨'}
+                                  {course.tenKhoaHoc.includes('CSS') && '🎨'}
+                                  {course.tenKhoaHoc.includes('JavaScript') && '⚡'}
+                                  {course.tenKhoaHoc.includes('React') && '⚛️'}
+                                  {course.tenKhoaHoc.includes('Python') && '🐍'}
+                                  {course.tenKhoaHoc.includes('Node') && '📗'}
+                                  {!course.tenKhoaHoc.match(/C\+\+|HTML|CSS|JavaScript|React|Python|Node/) && '📚'}
+                                </div>
+                                <div className={styles.courseFallbackTitle}>{course.tenKhoaHoc}</div>
+                              </div>
+                            </>
+                          ) : (
+                            <div className={styles.courseFallback} style={{ background: gradientBg }}>
+                              <div className={styles.courseIcon}>
+                                {course.tenKhoaHoc.includes('C++') && 'C++'}
+                                {course.tenKhoaHoc.includes('HTML') && '🎨'}
+                                {course.tenKhoaHoc.includes('CSS') && '🎨'}
+                                {course.tenKhoaHoc.includes('JavaScript') && '⚡'}
+                                {course.tenKhoaHoc.includes('React') && '⚛️'}
+                                {course.tenKhoaHoc.includes('Python') && '🐍'}
+                                {course.tenKhoaHoc.includes('Node') && '📗'}
+                                {!course.tenKhoaHoc.match(/C\+\+|HTML|CSS|JavaScript|React|Python|Node/) && '📚'}
+                              </div>
+                              <div className={styles.courseFallbackTitle}>{course.tenKhoaHoc}</div>
+                            </div>
+                          )}
+                          <div className={styles.courseOverlay}>
+                            <span className={styles.courseCategory}>{course.danhMucKhoaHoc.tenDanhMucKhoaHoc}</span>
                           </div>
-                          <div className={styles.courseTitle}>{course.tenKhoaHoc}</div>
+                          <div className={styles.hoverOverlay}>
+                            <span className={styles.viewButton}>Xem khóa học</span>
+                          </div>
                         </div>
                         <div className={styles.courseBody}>
                           <h3 className={styles.courseName}>{course.tenKhoaHoc}</h3>
+                          <p className={styles.courseDesc}>{course.moTa?.substring(0, 80)}...</p>
+                          <div className={styles.courseFooter}>
+                            <span className={styles.courseViews}>👁️ {course.luotXem}</span>
+                            <span className={styles.courseStudents}>🎓 {course.soLuongHocVien}</span>
+                          </div>
                         </div>
                       </Link>
                     );

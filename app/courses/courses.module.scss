@@ -197,21 +197,94 @@
     :global(.dark) & {
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     }
+
+    .courseImage img {
+      transform: scale(1.05);
+    }
+
+    .hoverOverlay {
+      opacity: 1;
+    }
   }
 }
 
 .courseImage {
   aspect-ratio: 16/9;
+  position: relative;
+  overflow: hidden;
+  background: #f0f0f0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: white;
+    z-index: 1;
+  }
+
+  :global(.dark) & {
+    background: #1a1d29;
+  }
+
+  .courseCard:hover & img {
+    transform: scale(1.05);
+  }
+}
+
+.courseFallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 32px;
-  position: relative;
   color: white;
+  z-index: 1;
 }
 
 .courseOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 50%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 12px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.categoryBadge {
+  background: rgba(255, 255, 255, 0.95);
+  color: #667eea;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hoverOverlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -223,51 +296,43 @@
   justify-content: center;
   opacity: 0;
   transition: opacity 0.3s ease;
-  pointer-events: none; // Không chặn click
-  
-  .courseCard:hover & {
-    opacity: 1;
-  }
+  pointer-events: none;
+  z-index: 3;
 }
 
-.viewBtn {
+.viewButton {
   background: white;
-  color: #333;
-  border: none;
-  padding: 12px 30px;
+  color: #667eea;
+  padding: 12px 32px;
   border-radius: 25px;
   font-size: 15px;
   font-weight: 600;
-  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
-  pointer-events: auto; // Chỉ btn mới nhận click
-  
+
   &:hover {
     transform: scale(1.05);
-    background: #4caf50;
+    background: #667eea;
     color: white;
-
-    :global(.dark) & {
-      background: #667eea;
-    }
   }
 }
 
 .courseIcon {
-  font-size: 48px;
-  font-weight: 700;
+  font-size: 72px;
   margin-bottom: 16px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 
   @media (max-width: 768px) {
-    font-size: 36px;
+    font-size: 56px;
   }
 }
 
 .courseTitle {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   text-align: center;
   line-height: 1.4;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .courseBody {
@@ -275,10 +340,11 @@
 }
 
 .courseName {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: #333333;
   line-height: 1.5;
+  margin-bottom: 10px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -287,5 +353,47 @@
 
   :global(.dark) & {
     color: #e8eaf0;
+  }
+}
+
+.courseDesc {
+  font-size: 14px;
+  color: #666666;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  :global(.dark) & {
+    color: #a8aab0;
+  }
+}
+
+.courseFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  gap: 12px;
+
+  :global(.dark) & {
+    border-top-color: #3d4152;
+  }
+}
+
+.courseViews,
+.courseStudents {
+  font-size: 13px;
+  color: #888888;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  :global(.dark) & {
+    color: #8a8d9a;
   }
 }

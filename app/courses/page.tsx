@@ -2,6 +2,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import Sidebar from '@/components/Sidebar';
 import { courseService } from '@/services/courseService';
 import { Course, CourseCategory } from '@/types/course';
@@ -132,6 +133,7 @@ function CoursesContent() {
                     <div className={styles.coursesGrid}>
                       {coursesInCategory.map((course, index) => {
                         const gradientBg = gradients[(catIndex * 3 + index) % gradients.length];
+                        const hasImage = course.hinhAnh && course.hinhAnh.trim() !== '';
                         
                         return (
                           <Link 
@@ -139,24 +141,68 @@ function CoursesContent() {
                             key={course.maKhoaHoc} 
                             className={styles.courseCard}
                           >
-                            <div className={styles.courseImage} style={{ background: gradientBg }}>
-                              <div className={styles.courseIcon}>
-                                {course.tenKhoaHoc.includes('C++') && 'C++'}
-                                {course.tenKhoaHoc.includes('HTML') && 'HTML'}
-                                {course.tenKhoaHoc.includes('CSS') && 'CSS'}
-                                {course.tenKhoaHoc.includes('JavaScript') && 'JS'}
-                                {course.tenKhoaHoc.includes('React') && '⚛️'}
-                                {course.tenKhoaHoc.includes('Python') && '🐍'}
-                                {course.tenKhoaHoc.includes('Node') && '📗'}
-                                {!course.tenKhoaHoc.match(/C\+\+|HTML|CSS|JavaScript|React|Python|Node/) && '📚'}
-                              </div>
-                              <div className={styles.courseTitle}>{course.tenKhoaHoc}</div>
+                            <div className={styles.courseImage}>
+                              {hasImage ? (
+                                <>
+                                  <Image 
+                                    src={course.hinhAnh} 
+                                    alt={course.tenKhoaHoc}
+                                    fill
+                                    style={{objectFit: 'cover'}}
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                      const parent = target.parentElement;
+                                      if (parent) {
+                                        parent.style.background = gradientBg;
+                                        const fallback = parent.querySelector(`.${styles.fallback}`);
+                                        if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                                      }
+                                    }}
+                                  />
+                                  <div className={styles.fallback}>
+                                    <div className={styles.courseIcon}>
+                                      {course.tenKhoaHoc.includes('C++') && 'C++'}
+                                      {course.tenKhoaHoc.includes('HTML') && '🎨'}
+                                      {course.tenKhoaHoc.includes('CSS') && '🎨'}
+                                      {course.tenKhoaHoc.includes('JavaScript') && '⚡'}
+                                      {course.tenKhoaHoc.includes('React') && '⚛️'}
+                                      {course.tenKhoaHoc.includes('Python') && '🐍'}
+                                      {course.tenKhoaHoc.includes('Node') && '📗'}
+                                      {!course.tenKhoaHoc.match(/C\+\+|HTML|CSS|JavaScript|React|Python|Node/) && '📚'}
+                                    </div>
+                                    <div className={styles.courseTitle}>{course.tenKhoaHoc}</div>
+                                  </div>
+                                </>
+                              ) : (
+                                <div className={styles.courseFallback} style={{ background: gradientBg }}>
+                                  <div className={styles.courseIcon}>
+                                    {course.tenKhoaHoc.includes('C++') && 'C++'}
+                                    {course.tenKhoaHoc.includes('HTML') && '🎨'}
+                                    {course.tenKhoaHoc.includes('CSS') && '🎨'}
+                                    {course.tenKhoaHoc.includes('JavaScript') && '⚡'}
+                                    {course.tenKhoaHoc.includes('React') && '⚛️'}
+                                    {course.tenKhoaHoc.includes('Python') && '🐍'}
+                                    {course.tenKhoaHoc.includes('Node') && '📗'}
+                                    {!course.tenKhoaHoc.match(/C\+\+|HTML|CSS|JavaScript|React|Python|Node/) && '📚'}
+                                  </div>
+                                  <div className={styles.courseTitle}>{course.tenKhoaHoc}</div>
+                                </div>
+                              )}
                               <div className={styles.courseOverlay}>
-                                <span className={styles.viewBtn}>Xem khóa học</span>
+                                <span className={styles.categoryBadge}>{course.danhMucKhoaHoc.tenDanhMucKhoaHoc}</span>
+                              </div>
+                              <div className={styles.hoverOverlay}>
+                                <span className={styles.viewButton}>Xem khóa học</span>
                               </div>
                             </div>
                             <div className={styles.courseBody}>
                               <h3 className={styles.courseName}>{course.tenKhoaHoc}</h3>
+                              <p className={styles.courseDesc}>{course.moTa?.substring(0, 70)}...</p>
+                              <div className={styles.courseFooter}>
+                                <span className={styles.courseViews}>👁️ {course.luotXem}</span>
+                                <span className={styles.courseStudents}>🎓 {course.soLuongHocVien}</span>
+                              </div>
                             </div>
                           </Link>
                         );
