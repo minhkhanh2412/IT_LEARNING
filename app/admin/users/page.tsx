@@ -190,6 +190,16 @@ export default function AdminUsersPage() {
     setLoading(true);
 
     try {
+      if (editingUser && !formData.matKhau) {
+        setNotification({
+          show: true,
+          title: 'Thiếu mật khẩu!',
+          message: 'API cập nhật yêu cầu mật khẩu. Vui lòng nhập mật khẩu mới để cập nhật người dùng.',
+          type: 'error'
+        });
+        return;
+      }
+
       const submitData: { [key: string]: string } = {
         hoTen: formData.hoTen,
         taiKhoan: formData.taiKhoan,

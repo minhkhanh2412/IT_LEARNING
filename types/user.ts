@@ -4,6 +4,7 @@ export interface User {
   email: string;
   soDT: string;
   soDt?: string; // API có thể trả về soDt (chữ t thường)
+  matKhau?: string;
   maLoaiNguoiDung: string; // "GV" = admin, "HV" = student
   tenLoaiNguoiDung?: string;
   accessToken?: string;
@@ -22,4 +23,5 @@ export interface LoginResponse {
   soDT: string;
   maLoaiNguoiDung: string;
   accessToken: string;
+  matKhau?: string;
 }

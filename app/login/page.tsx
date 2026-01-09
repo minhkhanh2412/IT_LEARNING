@@ -32,7 +32,12 @@ export default function LoginPage() {
       console.log('Đăng nhập thành công:', response);
       
       // Lưu thông tin user vào localStorage
-      localStorage.setItem('user', JSON.stringify(response));
+      const userToStore = {
+        ...response,
+        // Lưu để dùng khi gọi CapNhatThongTinNguoiDung (API yêu cầu matKhau)
+        matKhau: loginData.matKhau,
+      };
+      localStorage.setItem('user', JSON.stringify(userToStore));
       localStorage.setItem('ACCESS_TOKEN', response.accessToken);
       
       // Show success modal
@@ -88,7 +93,11 @@ export default function LoginPage() {
 
     try {
       const response = await authService.login(account);
-      localStorage.setItem('user', JSON.stringify(response));
+      const userToStore = {
+        ...response,
+        matKhau: account.matKhau,
+      };
+      localStorage.setItem('user', JSON.stringify(userToStore));
       localStorage.setItem('ACCESS_TOKEN', response.accessToken);
       
       // Show success modal
@@ -114,7 +123,11 @@ export default function LoginPage() {
           maLoaiNguoiDung: type === 'admin' ? 'GV' : 'HV',
         });
         const loginResponse = await authService.login(account);
-        localStorage.setItem('user', JSON.stringify(loginResponse));
+        const userToStore = {
+          ...loginResponse,
+          matKhau: account.matKhau,
+        };
+        localStorage.setItem('user', JSON.stringify(userToStore));
         localStorage.setItem('ACCESS_TOKEN', loginResponse.accessToken);
         
         setModalContent({

@@ -72,6 +72,17 @@ export default function SettingsPage() {
 
   const handleSaveEdit = async () => {
     if (!user) return;
+
+    // API CapNhatThongTinNguoiDung yêu cầu matKhau; nếu thiếu có thể bị set null
+    if (!user.matKhau) {
+      setNotification({
+        show: true,
+        title: 'Lỗi!',
+        message: 'Thiếu mật khẩu trong phiên đăng nhập. Vui lòng đăng nhập lại để cập nhật thông tin.',
+        type: 'error'
+      });
+      return;
+    }
     
     try {
       const updateData: Record<string, string> = {
@@ -79,6 +90,7 @@ export default function SettingsPage() {
         taiKhoan: formData.taiKhoan,
         email: formData.email,
         soDT: formData.soDT,
+        matKhau: user.matKhau,
         maLoaiNguoiDung: user.maLoaiNguoiDung,
         maNhom: 'GP01',
       };
@@ -165,6 +177,11 @@ export default function SettingsPage() {
 
       await userService.updateUser(updateData);
 
+      // Cập nhật lại user/password trong localStorage để các lần update sau không bị null
+      const updatedUser = { ...user, matKhau: passwordData.newPassword };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+
       setNotification({
         show: true,
         title: 'Đổi mật khẩu thành công! ✅',
@@ -221,6 +238,16 @@ export default function SettingsPage() {
       return;
     }
 
+    if (!user.matKhau) {
+      setNotification({
+        show: true,
+        title: 'Lỗi! ⚠️',
+        message: 'Thiếu mật khẩu trong phiên đăng nhập. Vui lòng đăng nhập lại để cập nhật ảnh đại diện.',
+        type: 'error'
+      });
+      return;
+    }
+
     try {
       // Gọi API cập nhật thông tin (không bao gồm hinhAnh vì API không hỗ trợ)
       const updateData = {
@@ -228,7 +255,7 @@ export default function SettingsPage() {
         hoTen: formData.hoTen,
         email: formData.email,
         soDT: formData.soDT,
-        matKhau: user.matKhau || '123456',
+        matKhau: user.matKhau,
         maLoaiNguoiDung: user.maLoaiNguoiDung,
         maNhom: 'GP01',
       };
@@ -243,7 +270,8 @@ export default function SettingsPage() {
       // Merge hinhAnh vào user data (vì API không lưu ảnh)
       const finalUserData = {
         ...updatedUserData,
-        hinhAnh: avatarPreview // Thêm avatar từ localStorage
+        hinhAnh: avatarPreview, // Thêm avatar từ localStorage
+        matKhau: user.matKhau,
       };
       
       console.log('Lưu user data với avatar vào localStorage:', finalUserData);
