@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import styles from './page.module.scss';
 import Sidebar from '@/components/Sidebar';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { courseService } from '@/services/courseService';
 import { Course } from '@/types/course';
 
@@ -39,8 +40,16 @@ export default function Home() {
   const fetchCourses = async () => {
     try {
       setLoading(true);
+      const startTime = Date.now();
       const data = await courseService.getCoursesByGroup();
       setCourses(data);
+      
+      // Đảm bảo loading hiển thị tối thiểu 2.5 giây
+      const elapsedTime = Date.now() - startTime;
+      const minLoadingTime = 2500;
+      if (elapsedTime < minLoadingTime) {
+        await new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
+      }
     } catch (error) {
       console.error('Error fetching courses:', error);
     } finally {
@@ -55,6 +64,10 @@ export default function Home() {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? 2 : prev - 1));
   };
+
+  if (loading) {
+    return <LoadingSpinner size={200} text="Đang tải khóa học..." />;
+  }
 
   return (
     <>

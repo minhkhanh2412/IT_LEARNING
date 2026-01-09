@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { BookOutlined, UserOutlined, ClockCircleOutlined, StarOutlined } from '@ant-design/icons';
 import Sidebar from '@/components/Sidebar';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { courseService } from '@/services/courseService';
 import { userService } from '@/services/userService';
 import { User } from '@/types/user';
@@ -24,6 +26,7 @@ export default function CourseDetailPage() {
   const fetchCourseDetail = useCallback(async () => {
     try {
       setLoading(true);
+      const startTime = Date.now();
       const courseData = await courseService.getCourseDetail(maKhoaHoc);
       console.log('=== COURSE DETAIL: Full course data:', courseData);
       setCourse(courseData);
@@ -49,6 +52,13 @@ export default function CourseDetailPage() {
             setIsEnrolled(false);
           }
         }
+      }
+      
+      // Đảm bảo loading hiển thị tối thiểu 2.5 giây
+      const elapsedTime = Date.now() - startTime;
+      const minLoadingTime = 2500;
+      if (elapsedTime < minLoadingTime) {
+        await new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
       }
     } catch (error) {
       console.error('Error fetching course detail:', error);
@@ -141,16 +151,7 @@ export default function CourseDetailPage() {
   };
 
   if (loading) {
-    return (
-      <>
-        <Sidebar />
-        <div className="mainLayout">
-          <main className={styles.main}>
-            <div className={styles.loading}>Đang tải...</div>
-          </main>
-        </div>
-      </>
-    );
+    return <LoadingSpinner size={200} text="Đang tải thông tin khóa học..." />;
   }
 
   if (!course) {
@@ -238,7 +239,25 @@ export default function CourseDetailPage() {
                   </div>
 
                   <div className={styles.heroImage}>
-                    <div className={styles.videoWrapper} style={{ background: gradient }}>
+                    <div className={styles.videoWrapper}>
+                      {course.hinhAnh ? (
+                        <Image
+                          src={course.hinhAnh}
+                          alt={course.tenKhoaHoc}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const wrapper = target.parentElement;
+                            if (wrapper) {
+                              wrapper.style.background = gradient;
+                            }
+                          }}
+                        />
+                      ) : (
+                        <div style={{ background: gradient, width: '100%', height: '100%' }} />
+                      )}
                       <div className={styles.playButton}>
                         <div className={styles.playIcon}>▶</div>
                       </div>

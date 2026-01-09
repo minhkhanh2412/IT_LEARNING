@@ -196,6 +196,16 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     position: relative;
     min-height: 400px;
+    overflow: hidden;
+
+    :global(.next-image-wrapper) {
+      position: absolute !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+    }
   }
 
   .playButton {
@@ -208,6 +218,8 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s;
+    position: relative;
+    z-index: 2;
 
     &:hover {
       background: rgba(255, 255, 255, 0.5);
@@ -229,6 +241,7 @@
     color: white;
     font-size: 1.1rem;
     font-weight: 600;
+    z-index: 2;
   }
 }
 

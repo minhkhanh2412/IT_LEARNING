@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import Sidebar from '@/components/Sidebar';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { courseService } from '@/services/courseService';
 import { Course, CourseCategory } from '@/types/course';
 import styles from './courses.module.scss';
@@ -47,12 +48,20 @@ function CoursesContent() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      const startTime = Date.now();
       const [coursesData, categoriesData] = await Promise.all([
         courseService.getCoursesByGroup(),
         courseService.getCourseCategories(),
       ]);
       setCourses(coursesData);
       setCategories(categoriesData);
+      
+      // Đảm bảo loading hiển thị tối thiểu 1.5 giây
+      const elapsedTime = Date.now() - startTime;
+      const minLoadingTime = 1500;
+      if (elapsedTime < minLoadingTime) {
+        await new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -64,12 +73,20 @@ function CoursesContent() {
     setSelectedCategory(categoryId);
     try {
       setLoading(true);
+      const startTime = Date.now();
       if (categoryId === 'all') {
         const data = await courseService.getCoursesByGroup();
         setCourses(data);
       } else {
         const data = await courseService.getCoursesByCategory(categoryId);
         setCourses(data);
+      }
+      
+      // Đảm bảo loading hiển thị tối thiểu 2.5 giây
+      const elapsedTime = Date.now() - startTime;
+      const minLoadingTime = 2500;
+      if (elapsedTime < minLoadingTime) {
+        await new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
       }
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -87,6 +104,10 @@ function CoursesContent() {
     acc[categoryName].push(course);
     return acc;
   }, {} as Record<string, Course[]>);
+
+  if (loading) {
+    return <LoadingSpinner size={200} text="Đang tải khóa học..." />;
+  }
 
   return (
     <>
