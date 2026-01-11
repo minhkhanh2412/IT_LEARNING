@@ -147,10 +147,34 @@
 
 .heroImage {
   flex: 1;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 350px;
   padding: 20px;
+
+  img {
+    object-fit: contain !important;
+    max-height: 400px;
+  }
+
+  @media (max-width: 968px) {
+    min-height: 280px;
+    
+    img {
+      max-height: 280px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    min-height: 220px;
+    padding: 16px;
+    
+    img {
+      max-height: 220px;
+    }
+  }
 }
 
 .courseFallback {

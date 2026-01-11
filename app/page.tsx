@@ -80,6 +80,7 @@ export default function Home() {
                 <LeftOutlined />
               </button>
               
+              {/* Banner chạy */}
               <div className={styles.slidesWrapper}>
                 <div className={`${styles.heroSlide} ${currentSlide === 0 ? styles.active : ''}`} data-gradient="blue">
                   <div className={styles.heroContent}>
@@ -92,36 +93,33 @@ export default function Home() {
                     </button>
                   </div>
                   <div className={styles.heroImage}>
-                    <div className={styles.illustration}>
-                      <div className={styles.floatingScreens}>
-                        <div className={styles.screen}>💻</div>
-                        <div className={styles.screen}>📱</div>
-                        <div className={styles.screen}>🎨</div>
-                      </div>
-                      <div className={styles.character}>🚀</div>
-                    </div>
+                    <Image
+                      src="/assets/banner/banner1.png"
+                      alt="Thành Quả của Học Viên"
+                      fill
+                      style={{objectFit: 'contain'}}
+                      priority
+                    />
                   </div>
                 </div>
 
                 <div className={`${styles.heroSlide} ${currentSlide === 1 ? styles.active : ''}`} data-gradient="orange">
                   <div className={styles.heroContent}>
-                    <h1 className={styles.heroTitle}>L9 trên Youtube</h1>
+                    <h1 className={styles.heroTitle}>Môi trường học tập tại IT</h1>
                     <p className={styles.heroText}>
-                      L9 được nhắc tới ở mọi nơi, ở đâu có cơ hội việc làm cho nghề IT và có những con người yêu thích lập trình F8 sẽ ở đó.
+                      Tại đây môi trường học tập được quan tâm hàng đầu. Cáo kênh học tập đa dạng và mỗi cá nhân học viên đều được hỗ trợ tối đa.
                     </p>
                     <button className={styles.btnOutline}>
-                      Truy cập kênh
+                      Xem chi tiết
                     </button>
                   </div>
                   <div className={styles.heroImage}>
-                    <div className={styles.illustration}>
-                      <div className={styles.youtubeIcon}>▶️</div>
-                      <div className={styles.socialIcons}>
-                        <span>👍</span>
-                        <span>💬</span>
-                        <span>📧</span>
-                      </div>
-                    </div>
+                    <Image
+                      src="/assets/banner/banner2.png"
+                      alt="Môi trường học tập tại IT"
+                      fill
+                      style={{objectFit: 'contain'}}
+                    />
                   </div>
                 </div>
 
@@ -129,21 +127,19 @@ export default function Home() {
                   <div className={styles.heroContent}>
                     <h1 className={styles.heroTitle}>Học Lập Trình Để Đi Làm</h1>
                     <p className={styles.heroText}>
-                      Với hơn 200.000 học viên, L9 là cộng đồng học lập trình lớn nhất Việt Nam. Tham gia ngay để cùng nhau phát triển.
+                      Với hơn 200.000 học viên, IT là cộng đồng học lập trình lớn nhất Việt Nam. Tham gia ngay để cùng nhau phát triển.
                     </p>
                     <button className={styles.btnOutline}>
                       Tham gia ngay
                     </button>
                   </div>
                   <div className={styles.heroImage}>
-                    <div className={styles.illustration}>
-                      <div className={styles.codeIcon}>👨‍💻</div>
-                      <div className={styles.techStack}>
-                        <span>⚛️</span>
-                        <span>📘</span>
-                        <span>🎯</span>
-                      </div>
-                    </div>
+                    <Image
+                      src="/assets/banner/banner3.png"
+                      alt="Học Lập Trình Để Đi Làm"
+                      fill
+                      style={{objectFit: 'contain'}}
+                    />
                   </div>
                 </div>
               </div>
