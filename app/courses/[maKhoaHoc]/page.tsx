@@ -34,7 +34,7 @@ export default function CourseDetailPage() {
 
       // Lấy số học viên - ưu tiên từ course.soLuongHocVien
       const initialCount = courseData.soLuongHocVien || 0;
-      console.log('=== Initial student count from course.soLuongHocVien:', initialCount);
+      // console.log('=== Initial student count from course.soLuongHocVien:', initialCount);
       setEnrolledStudentsCount(initialCount);
 
       // Check if user is enrolled
@@ -55,9 +55,9 @@ export default function CourseDetailPage() {
         }
       }
       
-      // Đảm bảo loading hiển thị tối thiểu 2.5 giây
+      // Đảm bảo loading hiển thị tối thiểu 2 giây
       const elapsedTime = Date.now() - startTime;
-      const minLoadingTime = 2500;
+      const minLoadingTime = 2000;
       if (elapsedTime < minLoadingTime) {
         await new Promise(resolve => setTimeout(resolve, minLoadingTime - elapsedTime));
       }
@@ -69,7 +69,7 @@ export default function CourseDetailPage() {
   }, [maKhoaHoc]);
 
   useEffect(() => {
-    // Load user from localStorage
+    // Load user từ localStorage
     if (typeof window !== 'undefined') {
       const userStr = localStorage.getItem('user');
       if (userStr && userStr !== 'undefined') {
@@ -84,7 +84,6 @@ export default function CourseDetailPage() {
 
     fetchCourseDetail();
 
-    // Listen for course updates (when someone enrolls/unenrolls)
     const handleCourseUpdate = async () => {
       console.log('=== DETAIL: Course updated event received');
       // Giảm số học viên 1 (khi hủy đăng ký từ profile)
@@ -92,7 +91,7 @@ export default function CourseDetailPage() {
       console.log('=== DETAIL: Decreased student count by 1');
     };
 
-    // Listen for visibility change (when user comes back to this tab)
+    
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         console.log('=== DETAIL: Tab became visible, checking for updates...');
@@ -209,7 +208,8 @@ export default function CourseDetailPage() {
                     </div>
 
                     <div className={styles.priceSection}>
-                      <div className={styles.price}>369.000 ₫</div>
+                      <div className={styles.originalPrice}>1.980.000 VNĐ</div>
+                      <div className={styles.freePrice}>Miễn phí</div>
                     </div>
 
                     <div className={styles.actions}>
