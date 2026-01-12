@@ -23,8 +23,9 @@ export default function AddCoursePage() {
     maKhoaHoc: '',
     tenKhoaHoc: '',
     moTa: '',
-    luotXem: 0,
-    danhGia: 0,
+    luotXem: 2004,
+    danhGia: 10,
+    gia: 1980000,
     hinhAnh: null as File | null,
     maNhom: 'GP01',
     ngayTao: new Date().toLocaleDateString('en-GB'),
@@ -167,7 +168,7 @@ export default function AddCoursePage() {
       
       setNotification({
         show: true,
-        title: 'Thêm thành công! ✅',
+        title: 'Thêm thành công! ',
         message: 'Khóa học mới đã được thêm vào hệ thống.',
         type: 'success'
       });
@@ -181,7 +182,7 @@ export default function AddCoursePage() {
       
       setNotification({
         show: true,
-        title: 'Thêm thất bại! ⚠️',
+        title: 'Thêm thất bại! ',
         message: err.response?.data || 'Không thể thêm khóa học. Vui lòng thử lại!',
         type: 'error'
       });
@@ -215,7 +216,26 @@ export default function AddCoursePage() {
                   value={formData.tenKhoaHoc}
                   onChange={(e) => {
                     const newName = e.target.value;
-                    const generatedCode = newName.toUpperCase().replace(/\s+/g, '').substring(0, 10) + Math.random().toString(36).substring(2, 5).toUpperCase();
+                    // Tự động tạo mã khóa học từ tên (URL-safe)
+                    const generateCourseCode = (name: string) => {
+                      // Loại bỏ dấu tiếng Việt
+                      const withoutDiacritics = name
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/đ/g, 'd')
+                        .replace(/Đ/g, 'D');
+                      
+                      // Chỉ giữ chữ cái và số, loại bỏ tất cả ký tự khác (bao gồm cả dấu cách)
+                      const alphanumeric = withoutDiacritics.replace(/[^a-zA-Z0-9]/g, '');
+                      
+                      // Lấy 10 ký tự đầu + 3 ký tự random
+                      const prefix = alphanumeric.substring(0, 10).toUpperCase();
+                      const suffix = Math.random().toString(36).substring(2, 5).toUpperCase();
+                      
+                      return prefix + suffix;
+                    };
+                    
+                    const generatedCode = generateCourseCode(newName);
                     setFormData({ ...formData, tenKhoaHoc: newName, maKhoaHoc: generatedCode });
                   }}
                   required
@@ -240,13 +260,31 @@ export default function AddCoursePage() {
                 <label className={styles.label}>
                   <span className={styles.required}>*</span> Giá khoá học
                 </label>
-                <input
-                  type="number"
-                  className={styles.input}
-                  placeholder="0"
-                  value={formData.luotXem}
-                  onChange={(e) => setFormData({ ...formData, luotXem: parseInt(e.target.value) || 0 })}
-                />
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="text"
+                    className={styles.input}
+                    placeholder="1.980.000"
+                    value={formData.gia.toLocaleString('vi-VN')}
+                    onChange={(e) => {
+                      // Loại bỏ tất cả ký tự không phải số
+                      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                      const price = parseInt(numericValue) || 0;
+                      setFormData({ ...formData, gia: price });
+                    }}
+                    style={{ paddingRight: '50px' }}
+                  />
+                  <span style={{ 
+                    position: 'absolute', 
+                    right: '15px', 
+                    top: '50%', 
+                    transform: 'translateY(-50%)',
+                    color: '#666',
+                    pointerEvents: 'none'
+                  }}>
+                    VNĐ
+                  </span>
+                </div>
               </div>
 
               <div className={styles.formGroup}>

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authService } from '@/services/authService';
 import styles from './login.module.scss';
+import { validateField, validateAllFields, hasErrors } from '@/utils/validation/commonValidation';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,14 +12,42 @@ export default function LoginPage() {
     taiKhoan: '',
     matKhau: '',
   });
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', message: '', type: 'success' as 'success' | 'error' });
 
+  // Validate field on blur
+  const handleBlur = (fieldName: string) => {
+    const error = validateField(fieldName, formData[fieldName as keyof typeof formData], formData);
+    setFieldErrors(prev => ({ ...prev, [fieldName]: error }));
+  };
+
+  // Handle input change with validation
+  const handleChange = (fieldName: string, value: string) => {
+    setFormData(prev => ({ ...prev, [fieldName]: value }));
+    
+    // Clear error on change
+    if (fieldErrors[fieldName]) {
+      setFieldErrors(prev => ({ ...prev, [fieldName]: '' }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate all fields
+    const fieldsToValidate = ['taiKhoan', 'matKhau'];
+    const errors = validateAllFields(formData, fieldsToValidate);
+    
+    if (hasErrors(errors)) {
+      setFieldErrors(errors);
+      setError('Vui lòng kiểm tra lại các trường thông tin');
+      return;
+    }
+
     setLoading(true);
 
     // Thử với tài khoản admin có sẵn trước
@@ -171,24 +200,32 @@ export default function LoginPage() {
             <label className={styles.label}>Tài khoản</label>
             <input
               type="text"
-              className={styles.input}
+              className={`${styles.input} ${fieldErrors.taiKhoan ? styles.inputError : ''}`}
               placeholder="Nhập tài khoản"
               value={formData.taiKhoan}
-              onChange={(e) => setFormData({ ...formData, taiKhoan: e.target.value })}
+              onChange={(e) => handleChange('taiKhoan', e.target.value)}
+              onBlur={() => handleBlur('taiKhoan')}
               required
             />
+            {fieldErrors.taiKhoan && (
+              <span className={styles.errorText}>{fieldErrors.taiKhoan}</span>
+            )}
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Mật khẩu</label>
             <input
               type="password"
-              className={styles.input}
+              className={`${styles.input} ${fieldErrors.matKhau ? styles.inputError : ''}`}
               placeholder="Nhập mật khẩu"
               value={formData.matKhau}
-              onChange={(e) => setFormData({ ...formData, matKhau: e.target.value })}
+              onChange={(e) => handleChange('matKhau', e.target.value)}
+              onBlur={() => handleBlur('matKhau')}
               required
             />
+            {fieldErrors.matKhau && (
+              <span className={styles.errorText}>{fieldErrors.matKhau}</span>
+            )}
           </div>
 
           <button 

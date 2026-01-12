@@ -42,6 +42,7 @@ export default function AdminCoursesPage() {
     message: '',
     type: 'success'
   });
+  const [imageErrors, setImageErrors] = useState<{ [key: string]: boolean }>({});
   const coursesPerPage = 12;
 
   useEffect(() => {
@@ -215,29 +216,15 @@ export default function AdminCoursesPage() {
                   return (
                     <div key={course.maKhoaHoc} className={styles.courseCard}>
                       <div className={styles.courseImage}>
-                        {course.hinhAnh ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img 
-                            src={course.hinhAnh} 
-                            alt={course.tenKhoaHoc}
-                            className={styles.courseImg}
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                              const parent = e.currentTarget.parentElement;
-                              if (parent) {
-                                parent.style.background = gradientBg;
-                                const icon = document.createElement('div');
-                                icon.className = styles.courseIcon;
-                                icon.textContent = '📚';
-                                parent.appendChild(icon);
-                              }
-                            }}
-                          />
-                        ) : (
-                          <div style={{ background: gradientBg, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <div className={styles.courseIcon}>📚</div>
-                          </div>
-                        )}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img 
+                          src={imageErrors[course.maKhoaHoc] || !course.hinhAnh ? '/assets/img_error.png' : course.hinhAnh}
+                          alt={course.tenKhoaHoc}
+                          className={styles.courseImg}
+                          onError={() => {
+                            setImageErrors(prev => ({ ...prev, [course.maKhoaHoc]: true }));
+                          }}
+                        />
                         <div className={styles.courseOverlay}>
                           <h3 className={styles.courseTitle}>{course.tenKhoaHoc}</h3>
                         </div>

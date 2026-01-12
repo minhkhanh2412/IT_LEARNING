@@ -27,6 +27,7 @@ function CoursesContent() {
   const [categories, setCategories] = useState<CourseCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [imageErrors, setImageErrors] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     fetchData();
@@ -155,6 +156,8 @@ function CoursesContent() {
                       {coursesInCategory.map((course, index) => {
                         const gradientBg = gradients[(catIndex * 3 + index) % gradients.length];
                         const hasImage = course.hinhAnh && course.hinhAnh.trim() !== '';
+                        const hasError = imageErrors[course.maKhoaHoc];
+                        const imageToShow = hasError || !hasImage ? '/assets/img_error.png' : course.hinhAnh;
                         
                         return (
                           <Link 
@@ -163,53 +166,15 @@ function CoursesContent() {
                             className={styles.courseCard}
                           >
                             <div className={styles.courseImage}>
-                              {hasImage ? (
-                                <>
-                                  <Image 
-                                    src={course.hinhAnh} 
-                                    alt={course.tenKhoaHoc}
-                                    fill
-                                    style={{objectFit: 'cover'}}
-                                    onError={(e) => {
-                                      const target = e.target as HTMLImageElement;
-                                      target.style.display = 'none';
-                                      const parent = target.parentElement;
-                                      if (parent) {
-                                        parent.style.background = gradientBg;
-                                        const fallback = parent.querySelector(`.${styles.fallback}`);
-                                        if (fallback) (fallback as HTMLElement).style.display = 'flex';
-                                      }
-                                    }}
-                                  />
-                                  <div className={styles.fallback}>
-                                    <div className={styles.courseIcon}>
-                                      {course.tenKhoaHoc.includes('C++') && 'C++'}
-                                      {course.tenKhoaHoc.includes('HTML') && '🎨'}
-                                      {course.tenKhoaHoc.includes('CSS') && '🎨'}
-                                      {course.tenKhoaHoc.includes('JavaScript') && '⚡'}
-                                      {course.tenKhoaHoc.includes('React') && '⚛️'}
-                                      {course.tenKhoaHoc.includes('Python') && '🐍'}
-                                      {course.tenKhoaHoc.includes('Node') && '📗'}
-                                      {!course.tenKhoaHoc.match(/C\+\+|HTML|CSS|JavaScript|React|Python|Node/) && '📚'}
-                                    </div>
-                                    <div className={styles.courseTitle}>{course.tenKhoaHoc}</div>
-                                  </div>
-                                </>
-                              ) : (
-                                <div className={styles.courseFallback} style={{ background: gradientBg }}>
-                                  <div className={styles.courseIcon}>
-                                    {course.tenKhoaHoc.includes('C++') && 'C++'}
-                                    {course.tenKhoaHoc.includes('HTML') && '🎨'}
-                                    {course.tenKhoaHoc.includes('CSS') && '🎨'}
-                                    {course.tenKhoaHoc.includes('JavaScript') && '⚡'}
-                                    {course.tenKhoaHoc.includes('React') && '⚛️'}
-                                    {course.tenKhoaHoc.includes('Python') && '🐍'}
-                                    {course.tenKhoaHoc.includes('Node') && '📗'}
-                                    {!course.tenKhoaHoc.match(/C\+\+|HTML|CSS|JavaScript|React|Python|Node/) && '📚'}
-                                  </div>
-                                  <div className={styles.courseTitle}>{course.tenKhoaHoc}</div>
-                                </div>
-                              )}
+                              <Image 
+                                src={imageToShow} 
+                                alt={course.tenKhoaHoc}
+                                fill
+                                style={{objectFit: 'cover'}}
+                                onError={() => {
+                                  setImageErrors(prev => ({ ...prev, [course.maKhoaHoc]: true }));
+                                }}
+                              />
                               <div className={styles.courseOverlay}>
                                 <span className={styles.categoryBadge}>{course.danhMucKhoaHoc.tenDanhMucKhoaHoc}</span>
                               </div>

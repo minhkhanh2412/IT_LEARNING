@@ -4,6 +4,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authService } from '@/services/authService';
 import styles from '../login/login.module.scss';
+import { 
+  validateField, 
+  validateAllFields, 
+  hasErrors
+} from '@/utils/validation/commonValidation';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,12 +22,40 @@ export default function RegisterPage() {
     maNhom: 'GP01',
     maLoaiNguoiDung: 'HV', // Luôn là HV cho đăng ký công khai
   });
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Validate field on blur
+  const handleBlur = (fieldName: string) => {
+    const error = validateField(fieldName, formData[fieldName as keyof typeof formData], formData);
+    setFieldErrors(prev => ({ ...prev, [fieldName]: error }));
+  };
+
+  // Handle input change with validation
+  const handleChange = (fieldName: string, value: string) => {
+    setFormData(prev => ({ ...prev, [fieldName]: value }));
+    
+    // Clear error on change
+    if (fieldErrors[fieldName]) {
+      setFieldErrors(prev => ({ ...prev, [fieldName]: '' }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validate all fields
+    const fieldsToValidate = ['taiKhoan', 'matKhau', 'hoTen', 'soDT', 'email'];
+    const errors = validateAllFields(formData, fieldsToValidate);
+    
+    if (hasErrors(errors)) {
+      setFieldErrors(errors);
+      setError('Vui lòng kiểm tra lại các trường thông tin');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -60,60 +93,80 @@ export default function RegisterPage() {
             <label className={styles.label}>Tài khoản *</label>
             <input
               type="text"
-              className={styles.input}
-              placeholder="Nhập tài khoản"
+              className={`${styles.input} ${fieldErrors.taiKhoan ? styles.inputError : ''}`}
+              placeholder="Nhập tài khoản (4-20 ký tự)"
               value={formData.taiKhoan}
-              onChange={(e) => setFormData({ ...formData, taiKhoan: e.target.value })}
+              onChange={(e) => handleChange('taiKhoan', e.target.value)}
+              onBlur={() => handleBlur('taiKhoan')}
               required
             />
+            {fieldErrors.taiKhoan && (
+              <span className={styles.errorText}>{fieldErrors.taiKhoan}</span>
+            )}
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Mật khẩu *</label>
             <input
               type="password"
-              className={styles.input}
-              placeholder="Nhập mật khẩu"
+              className={`${styles.input} ${fieldErrors.matKhau ? styles.inputError : ''}`}
+              placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
               value={formData.matKhau}
-              onChange={(e) => setFormData({ ...formData, matKhau: e.target.value })}
+              onChange={(e) => handleChange('matKhau', e.target.value)}
+              onBlur={() => handleBlur('matKhau')}
               required
             />
+            {fieldErrors.matKhau && (
+              <span className={styles.errorText}>{fieldErrors.matKhau}</span>
+            )}
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Họ tên *</label>
             <input
               type="text"
-              className={styles.input}
-              placeholder="Nhập họ tên"
+              className={`${styles.input} ${fieldErrors.hoTen ? styles.inputError : ''}`}
+              placeholder="Nhập họ tên đầy đủ"
               value={formData.hoTen}
-              onChange={(e) => setFormData({ ...formData, hoTen: e.target.value })}
+              onChange={(e) => handleChange('hoTen', e.target.value)}
+              onBlur={() => handleBlur('hoTen')}
               required
             />
+            {fieldErrors.hoTen && (
+              <span className={styles.errorText}>{fieldErrors.hoTen}</span>
+            )}
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Số điện thoại *</label>
             <input
               type="tel"
-              className={styles.input}
-              placeholder="Nhập số điện thoại"
+              className={`${styles.input} ${fieldErrors.soDT ? styles.inputError : ''}`}
+              placeholder="Nhập số điện thoại (VD: 0901234567)"
               value={formData.soDT}
-              onChange={(e) => setFormData({ ...formData, soDT: e.target.value })}
+              onChange={(e) => handleChange('soDT', e.target.value)}
+              onBlur={() => handleBlur('soDT')}
               required
             />
+            {fieldErrors.soDT && (
+              <span className={styles.errorText}>{fieldErrors.soDT}</span>
+            )}
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Email *</label>
             <input
               type="email"
-              className={styles.input}
+              className={`${styles.input} ${fieldErrors.email ? styles.inputError : ''}`}
               placeholder="Nhập email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => handleChange('email', e.target.value)}
+              onBlur={() => handleBlur('email')}
               required
             />
+            {fieldErrors.email && (
+              <span className={styles.errorText}>{fieldErrors.email}</span>
+            )}
           </div>
 
           <button 
