@@ -6,6 +6,11 @@ import Sidebar from '@/components/Sidebar';
 import { userService } from '@/services/userService';
 import { User } from '@/types/user';
 import styles from './admin-users.module.scss';
+import { 
+  validateField, 
+  validateAllFields, 
+  hasErrors
+} from '@/utils/validation/commonValidation';
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -30,6 +35,7 @@ export default function AdminUsersPage() {
     soDT: '',
     maLoaiNguoiDung: 'HV',
   });
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const [notification, setNotification] = useState<{ show: boolean; title: string; message: string; type: 'success' | 'error' }>({
     show: false,
     title: '',
@@ -155,6 +161,7 @@ export default function AdminUsersPage() {
       soDT: '',
       maLoaiNguoiDung: 'HV',
     });
+    setFieldErrors({});
     setShowModal(true);
   };
 
@@ -168,6 +175,7 @@ export default function AdminUsersPage() {
       soDT: user.soDT || user.soDt || '', // Xử lý cả soDT và soDt
       maLoaiNguoiDung: user.maLoaiNguoiDung,
     });
+    setFieldErrors({});
     setShowModal(true);
   };
 
@@ -175,6 +183,7 @@ export default function AdminUsersPage() {
     setShowModal(false);
     setEditingUser(null);
     setShowPassword(false);
+    setFieldErrors({});
     setFormData({
       hoTen: '',
       taiKhoan: '',
@@ -185,8 +194,48 @@ export default function AdminUsersPage() {
     });
   };
 
+  // Validate field on blur
+  const handleBlur = (fieldName: string) => {
+    const error = validateField(fieldName, formData[fieldName as keyof typeof formData], formData);
+    setFieldErrors(prev => ({ ...prev, [fieldName]: error }));
+  };
+
+  // Handle input change with validation
+  const handleChange = (fieldName: string, value: string) => {
+    setFormData(prev => ({ ...prev, [fieldName]: value }));
+    
+    // Clear error on change
+    if (fieldErrors[fieldName]) {
+      setFieldErrors(prev => ({ ...prev, [fieldName]: '' }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate all fields
+    const fieldsToValidate = editingUser 
+      ? ['hoTen', 'email', 'soDT'] // Khi edit, tài khoản không được sửa, mật khẩu tùy chọn
+      : ['hoTen', 'taiKhoan', 'matKhau', 'email', 'soDT']; // Khi thêm mới, validate tất cả
+    
+    // Nếu đang edit và có nhập mật khẩu mới, validate mật khẩu
+    if (editingUser && formData.matKhau) {
+      fieldsToValidate.push('matKhau');
+    }
+    
+    const errors = validateAllFields(formData, fieldsToValidate);
+    
+    if (hasErrors(errors)) {
+      setFieldErrors(errors);
+      setNotification({
+        show: true,
+        title: 'Vui lòng kiểm tra! ⚠️',
+        message: 'Có lỗi trong biểu mẫu. Vui lòng kiểm tra lại các trường thông tin.',
+        type: 'error'
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -415,23 +464,31 @@ export default function AdminUsersPage() {
                 <input 
                   type="text" 
                   placeholder="Họ và tên" 
-                  className={styles.input}
+                  className={`${styles.input} ${fieldErrors.hoTen ? styles.inputError : ''}`}
                   value={formData.hoTen}
-                  onChange={(e) => setFormData({ ...formData, hoTen: e.target.value })}
+                  onChange={(e) => handleChange('hoTen', e.target.value)}
+                  onBlur={() => handleBlur('hoTen')}
                   required
                 />
+                {fieldErrors.hoTen && (
+                  <span className={styles.errorText}>{fieldErrors.hoTen}</span>
+                )}
               </div>
               
               <div className={styles.formGroup}>
                 <input 
                   type="text" 
                   placeholder="Tài khoản" 
-                  className={styles.input}
+                  className={`${styles.input} ${fieldErrors.taiKhoan ? styles.inputError : ''}`}
                   value={formData.taiKhoan}
-                  onChange={(e) => setFormData({ ...formData, taiKhoan: e.target.value })}
+                  onChange={(e) => handleChange('taiKhoan', e.target.value)}
+                  onBlur={() => handleBlur('taiKhoan')}
                   disabled={!!editingUser}
                   required
                 />
+                {fieldErrors.taiKhoan && (
+                  <span className={styles.errorText}>{fieldErrors.taiKhoan}</span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -439,9 +496,10 @@ export default function AdminUsersPage() {
                   <input 
                     type={showPassword ? 'text' : 'password'}
                     placeholder={editingUser ? 'Mật khẩu mới (để trống nếu không đổi)' : 'Mật khẩu'}
-                    className={styles.input}
+                    className={`${styles.input} ${fieldErrors.matKhau ? styles.inputError : ''}`}
                     value={formData.matKhau}
-                    onChange={(e) => setFormData({ ...formData, matKhau: e.target.value })}
+                    onChange={(e) => handleChange('matKhau', e.target.value)}
+                    onBlur={() => handleBlur('matKhau')}
                     required={!editingUser}
                   />
                   <button 
@@ -452,28 +510,39 @@ export default function AdminUsersPage() {
                     {showPassword ? '🙈' : '👁️'}
                   </button>
                 </div>
+                {fieldErrors.matKhau && (
+                  <span className={styles.errorText}>{fieldErrors.matKhau}</span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
                 <input 
                   type="email" 
                   placeholder="Email" 
-                  className={styles.input}
+                  className={`${styles.input} ${fieldErrors.email ? styles.inputError : ''}`}
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => handleChange('email', e.target.value)}
+                  onBlur={() => handleBlur('email')}
                   required
                 />
+                {fieldErrors.email && (
+                  <span className={styles.errorText}>{fieldErrors.email}</span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
                 <input 
                   type="tel" 
                   placeholder="Số điện thoại" 
-                  className={styles.input}
+                  className={`${styles.input} ${fieldErrors.soDT ? styles.inputError : ''}`}
                   value={formData.soDT}
-                  onChange={(e) => setFormData({ ...formData, soDT: e.target.value })}
+                  onChange={(e) => handleChange('soDT', e.target.value)}
+                  onBlur={() => handleBlur('soDT')}
                   required
                 />
+                {fieldErrors.soDT && (
+                  <span className={styles.errorText}>{fieldErrors.soDT}</span>
+                )}
               </div>
 
               <div className={styles.formGroup}>

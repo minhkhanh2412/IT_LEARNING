@@ -22,6 +22,7 @@ export default function CourseDetailPage() {
   const [enrolling, setEnrolling] = useState(false);
   const [enrolledStudentsCount, setEnrolledStudentsCount] = useState(0);
   const [notification, setNotification] = useState<{show: boolean, message: string, type: 'success' | 'error'}>({show: false, message: '', type: 'success'});
+  const [imageError, setImageError] = useState(false);
 
   const fetchCourseDetail = useCallback(async () => {
     try {
@@ -240,24 +241,13 @@ export default function CourseDetailPage() {
 
                   <div className={styles.heroImage}>
                     <div className={styles.videoWrapper}>
-                      {course.hinhAnh ? (
-                        <Image
-                          src={course.hinhAnh}
-                          alt={course.tenKhoaHoc}
-                          fill
-                          style={{ objectFit: 'cover' }}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const wrapper = target.parentElement;
-                            if (wrapper) {
-                              wrapper.style.background = gradient;
-                            }
-                          }}
-                        />
-                      ) : (
-                        <div style={{ background: gradient, width: '100%', height: '100%' }} />
-                      )}
+                      <Image
+                        src={imageError || !course.hinhAnh ? '/assets/img_error.png' : course.hinhAnh}
+                        alt={course.tenKhoaHoc}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        onError={() => setImageError(true)}
+                      />
                       <div className={styles.playButton}>
                         <div className={styles.playIcon}>▶</div>
                       </div>

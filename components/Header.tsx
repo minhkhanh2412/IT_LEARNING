@@ -11,7 +11,8 @@ import {
   BookOutlined,
   DownOutlined,
   SunOutlined,
-  MoonOutlined
+  MoonOutlined,
+  SearchOutlined
 } from '@ant-design/icons';
 import { User } from '@/types/user';
 import styles from './Header.module.scss';
@@ -147,7 +148,7 @@ export default function Header() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <button type="submit" className={styles.searchButton}>
-          🔍
+          <SearchOutlined />
         </button>
       </form>
 

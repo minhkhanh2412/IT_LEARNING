@@ -5,6 +5,10 @@ import { UserOutlined, LockOutlined, BellOutlined } from '@ant-design/icons';
 import Sidebar from '@/components/Sidebar';
 import { userService } from '@/services/userService';
 import styles from './settings.module.scss';
+import { 
+  validateField, 
+  VALIDATION_MESSAGES 
+} from '@/utils/validation/commonValidation';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -24,7 +28,10 @@ export default function SettingsPage() {
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
+    confirmPassword: '',
   });
+  const [editFieldError, setEditFieldError] = useState('');
+  const [passwordErrors, setPasswordErrors] = useState<{ [key: string]: string }>({});
   const [notification, setNotification] = useState<{ show: boolean; title: string; message: string; type: 'success' | 'error' }>({
     show: false,
     title: '',
@@ -61,6 +68,7 @@ export default function SettingsPage() {
   const handleOpenEditModal = (field: string, currentValue: string) => {
     setEditField(field);
     setEditValue(currentValue);
+    setEditFieldError('');
     setShowEditModal(true);
   };
 
@@ -68,10 +76,32 @@ export default function SettingsPage() {
     setShowEditModal(false);
     setEditField('');
     setEditValue('');
+    setEditFieldError('');
+  };
+
+  const handleEditValueChange = (value: string) => {
+    setEditValue(value);
+    // Clear error khi user typing
+    if (editFieldError) {
+      setEditFieldError('');
+    }
+  };
+
+  const handleEditBlur = () => {
+    // Validate khi blur
+    const error = validateField(editField, editValue, {});
+    setEditFieldError(error);
   };
 
   const handleSaveEdit = async () => {
     if (!user) return;
+
+    // Validate field trước khi submit
+    const error = validateField(editField, editValue, {});
+    if (error) {
+      setEditFieldError(error);
+      return;
+    }
 
     // API CapNhatThongTinNguoiDung yêu cầu matKhau; nếu thiếu có thể bị set null
     if (!user.matKhau) {
@@ -130,21 +160,34 @@ export default function SettingsPage() {
   const handleChangePassword = async () => {
     if (!user) return;
     
-    if (!passwordData.currentPassword || !passwordData.newPassword) {
-      setNotification({
-        show: true,
-        title: 'Lỗi! ⚠️',
-        message: 'Vui lòng nhập đầy đủ mật khẩu hiện tại và mật khẩu mới.',
-        type: 'error'
-      });
-      return;
+    // Validate tất cả các trường
+    const errors: { [key: string]: string } = {};
+    
+    if (!passwordData.currentPassword) {
+      errors.currentPassword = VALIDATION_MESSAGES.required;
     }
-
-    if (passwordData.newPassword.length < 6) {
+    
+    if (!passwordData.newPassword) {
+      errors.newPassword = VALIDATION_MESSAGES.required;
+    } else {
+      const passwordError = validateField('matKhau', passwordData.newPassword, {});
+      if (passwordError) {
+        errors.newPassword = passwordError;
+      }
+    }
+    
+    if (!passwordData.confirmPassword) {
+      errors.confirmPassword = VALIDATION_MESSAGES.required;
+    } else if (passwordData.newPassword !== passwordData.confirmPassword) {
+      errors.confirmPassword = VALIDATION_MESSAGES.passwordConfirm;
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setPasswordErrors(errors);
       setNotification({
         show: true,
         title: 'Lỗi! ⚠️',
-        message: 'Mật khẩu mới phải có ít nhất 6 ký tự.',
+        message: 'Vui lòng kiểm tra lại các trường mật khẩu.',
         type: 'error'
       });
       return;
@@ -192,7 +235,9 @@ export default function SettingsPage() {
       setPasswordData({
         currentPassword: '',
         newPassword: '',
+        confirmPassword: '',
       });
+      setPasswordErrors({});
     } catch (error) {
       console.error('Error changing password:', error);
       
@@ -218,6 +263,30 @@ export default function SettingsPage() {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        setNotification({
+          show: true,
+          title: 'Lỗi! ⚠️',
+          message: 'Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WEBP).',
+          type: 'error'
+        });
+        return;
+      }
+      
+      // Validate file size (max 2MB)
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      if (file.size > maxSize) {
+        setNotification({
+          show: true,
+          title: 'Lỗi! ⚠️',
+          message: 'Kích thước file không được vượt quá 2MB.',
+          type: 'error'
+        });
+        return;
+      }
+      
       setAvatarFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -307,10 +376,33 @@ export default function SettingsPage() {
 
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setPasswordData({
       ...passwordData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+    
+    // Clear error khi user typing
+    if (passwordErrors[name]) {
+      setPasswordErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handlePasswordBlur = (fieldName: string) => {
+    const errors: { [key: string]: string } = {};
+    
+    if (fieldName === 'newPassword' && passwordData.newPassword) {
+      const error = validateField('matKhau', passwordData.newPassword, {});
+      if (error) errors.newPassword = error;
+    }
+    
+    if (fieldName === 'confirmPassword' && passwordData.confirmPassword) {
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        errors.confirmPassword = VALIDATION_MESSAGES.passwordConfirm;
+      }
+    }
+    
+    setPasswordErrors(prev => ({ ...prev, ...errors }));
   };
 
   const handleNotificationToggle = (key: string) => {
@@ -376,17 +468,9 @@ export default function SettingsPage() {
 
                     <div className={styles.formGroup}>
                       <label className={styles.label}>Tài khoản</label>
-                      <div className={styles.inputWithButton}>
-                        <div className={styles.valueDisplay}>
-                          <p className={styles.value}>{formData.taiKhoan}</p>
-                          <p className={styles.hint}>Tài khoản để đăng nhập.</p>
-                        </div>
-                        <button 
-                          className={styles.editBtn}
-                          onClick={() => handleOpenEditModal('taiKhoan', formData.taiKhoan)}
-                        >
-                          Chỉnh sửa
-                        </button>
+                      <div className={styles.valueDisplay}>
+                        <p className={styles.value}>{formData.taiKhoan}</p>
+                        <p className={styles.hint}>Tài khoản để đăng nhập (không thể thay đổi).</p>
                       </div>
                     </div>
 
@@ -466,22 +550,50 @@ export default function SettingsPage() {
                     <div className={styles.formGroup}>
                       <label className={styles.label}>Thay đổi mật khẩu</label>
                       <div className={styles.passwordInputs}>
-                        <input
-                          type="password"
-                          placeholder="Mật khẩu hiện tại của bạn"
-                          className={styles.input}
-                          name="currentPassword"
-                          value={passwordData.currentPassword}
-                          onChange={handlePasswordChange}
-                        />
-                        <input
-                          type="password"
-                          placeholder="Mật khẩu mới của bạn"
-                          className={styles.input}
-                          name="newPassword"
-                          value={passwordData.newPassword}
-                          onChange={handlePasswordChange}
-                        />
+                        <div className={styles.passwordField}>
+                          <input
+                            type="password"
+                            placeholder="Mật khẩu hiện tại của bạn"
+                            className={`${styles.input} ${passwordErrors.currentPassword ? styles.inputError : ''}`}
+                            name="currentPassword"
+                            value={passwordData.currentPassword}
+                            onChange={handlePasswordChange}
+                          />
+                          {passwordErrors.currentPassword && (
+                            <span className={styles.errorText}>{passwordErrors.currentPassword}</span>
+                          )}
+                        </div>
+                        
+                        <div className={styles.passwordField}>
+                          <input
+                            type="password"
+                            placeholder="Mật khẩu mới của bạn"
+                            className={`${styles.input} ${passwordErrors.newPassword ? styles.inputError : ''}`}
+                            name="newPassword"
+                            value={passwordData.newPassword}
+                            onChange={handlePasswordChange}
+                            onBlur={() => handlePasswordBlur('newPassword')}
+                          />
+                          {passwordErrors.newPassword && (
+                            <span className={styles.errorText}>{passwordErrors.newPassword}</span>
+                          )}
+                        </div>
+                        
+                        <div className={styles.passwordField}>
+                          <input
+                            type="password"
+                            placeholder="Xác nhận mật khẩu mới"
+                            className={`${styles.input} ${passwordErrors.confirmPassword ? styles.inputError : ''}`}
+                            name="confirmPassword"
+                            value={passwordData.confirmPassword}
+                            onChange={handlePasswordChange}
+                            onBlur={() => handlePasswordBlur('confirmPassword')}
+                          />
+                          {passwordErrors.confirmPassword && (
+                            <span className={styles.errorText}>{passwordErrors.confirmPassword}</span>
+                          )}
+                        </div>
+                        
                         <button 
                           className={styles.saveBtn}
                           onClick={handleChangePassword}
@@ -520,7 +632,7 @@ export default function SettingsPage() {
                           <p className={styles.linkHint}>Chưa liên kết số điện thoại nào</p>
                         </div>
                         <button className={styles.linkBtn}>
-                          <span>📱</span> Liên kết số điện thoại
+                          <span></span> Liên kết số điện thoại
                         </button>
                       </div>
                     </div>
@@ -678,13 +790,17 @@ export default function SettingsPage() {
             </h3>
             <input
               type={editField === 'email' ? 'email' : 'text'}
-              className={styles.modalInput}
+              className={`${styles.modalInput} ${editFieldError ? styles.inputError : ''}`}
               value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
+              onChange={(e) => handleEditValueChange(e.target.value)}
+              onBlur={handleEditBlur}
               placeholder={`Nhập ${editField === 'hoTen' ? 'họ tên' : 
                                    editField === 'taiKhoan' ? 'tài khoản' :
                                    editField === 'email' ? 'email' : 'số điện thoại'} mới`}
             />
+            {editFieldError && (
+              <span className={styles.errorText}>{editFieldError}</span>
+            )}
             <div className={styles.modalActions}>
               <button onClick={handleCloseEditModal} className={styles.cancelBtn}>
                 Hủy
