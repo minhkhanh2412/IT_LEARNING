@@ -39,4 +39,18 @@ export const API_ENDPOINTS = {
     UPDATE_USER: '/api/QuanLyNguoiDung/CapNhatThongTinNguoiDung',
     ADD_USER: '/api/QuanLyNguoiDung/ThemNguoiDung',
   },
+
+  // Quản lý ghi danh khóa học
+  ENROLLMENT: {
+    // Lấy danh sách học viên đã ghi danh vào khóa học (sau khi admin duyệt)
+    GET_ENROLLED_STUDENTS: '/api/QuanLyNguoiDung/LayDanhSachHocVienKhoaHoc',
+    // Lấy danh sách học viên đang chờ xét duyệt
+    GET_PENDING_STUDENTS: '/api/QuanLyNguoiDung/LayDanhSachHocVienChoXetDuyet',
+    // Lấy danh sách người dùng chưa ghi danh vào khóa học
+    GET_NOT_ENROLLED_USERS: '/api/QuanLyNguoiDung/LayDanhSachNguoiDungChuaGhiDanh',
+    // Xác thực/Duyệt học viên vào khóa học (admin action)
+    APPROVE_ENROLLMENT: '/api/QuanLyKhoaHoc/GhiDanhKhoaHoc',
+    // Hủy ghi danh khóa học
+    CANCEL_ENROLLMENT: '/api/QuanLyKhoaHoc/HuyGhiDanh',
+  },
 };

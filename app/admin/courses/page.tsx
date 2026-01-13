@@ -149,18 +149,9 @@ export default function AdminCoursesPage() {
     setDeleteModal({ show: false, courseId: '', courseName: '' });
   };
 
-  const handleViewStudents = async (courseId: string, courseName: string) => {
-    setViewStudentsModal({ show: true, courseId, courseName });
-    setLoadingStudents(true);
-    try {
-      const students = await courseService.getEnrolledStudents(courseId);
-      setEnrolledStudents(students);
-    } catch (error) {
-      console.error('Error fetching enrolled students:', error);
-      setEnrolledStudents([]);
-    } finally {
-      setLoadingStudents(false);
-    }
+  const handleViewStudents = (courseId: string, courseName: string) => {
+    // Navigate đến trang quản lý học viên của khóa họcc
+    router.push(`/admin/courses/view/${courseId}`);
   };
 
   const closeStudentsModal = () => {

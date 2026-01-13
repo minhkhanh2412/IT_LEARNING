@@ -121,15 +121,18 @@ export default function CourseDetailPage() {
       setIsEnrolled(true);
       console.log('=== ENROLL: Success!');
       
-      // Tăng số học viên lên 1
-      setEnrolledStudentsCount(prev => prev + 1);
-      console.log('=== ENROLL: Increased student count by 1');
+      // Không tăng số học viên vì chỉ vào "Chờ xét duyệt", chưa chính thức ghi danh
+      // setEnrolledStudentsCount(prev => prev + 1);
       
       // Dispatch event để profile page reload courses
       window.dispatchEvent(new Event('coursesUpdated'));
       
-      setNotification({show: true, message: 'Đăng ký khóa học thành công!', type: 'success'});
-      setTimeout(() => setNotification({show: false, message: '', type: 'success'}), 3000);
+      setNotification({
+        show: true, 
+        message: 'Đăng ký khóa học thành công! Vui lòng chờ admin xét duyệt.', 
+        type: 'success'
+      });
+      setTimeout(() => setNotification({show: false, message: '', type: 'success'}), 5000);
     } catch (error) {
       console.error('=== ENROLL: Error enrolling course:', error);
       const err = error as { response?: { data?: string } };
