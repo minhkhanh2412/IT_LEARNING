@@ -17,7 +17,8 @@ import styles from './enrollment.module.scss';
 export default function CourseEnrollmentPage() {
   const params = useParams();
   const router = useRouter();
-  const maKhoaHoc = params.maKhoaHoc as string;
+  // Decode URL param để xử lý mã khóa học có khoảng trắng hoặc ký tự đặc biệt
+  const maKhoaHoc = decodeURIComponent(params.maKhoaHoc as string);
 
   // Thông tin khóa học
   const [courseName, setCourseName] = useState<string>('');

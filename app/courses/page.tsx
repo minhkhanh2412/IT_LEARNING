@@ -161,7 +161,7 @@ function CoursesContent() {
                         
                         return (
                           <Link 
-                            href={`/courses/${course.maKhoaHoc}`} 
+                            href={`/courses/${encodeURIComponent(course.maKhoaHoc)}`} 
                             key={course.maKhoaHoc} 
                             className={styles.courseCard}
                           >

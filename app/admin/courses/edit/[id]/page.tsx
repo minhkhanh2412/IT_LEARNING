@@ -11,7 +11,8 @@ import styles from '../../add/add-course.module.scss';
 export default function EditCoursePage() {
   const router = useRouter();
   const params = useParams();
-  const courseId = params.id as string;
+  // Decode URL param để xử lý mã khóa học có khoảng trắng hoặc ký tự đặc biệt
+  const courseId = decodeURIComponent(params.id as string);
   
   const [categories, setCategories] = useState<CourseCategory[]>([]);
   const [loading, setLoading] = useState(false);
@@ -54,21 +55,12 @@ export default function EditCoursePage() {
   const fetchCourseDetail = useCallback(async () => {
     try {
       setLoadingData(true);
-      console.log('Fetching course detail for:', courseId);
       
       if (!courseId) {
         throw new Error('Course ID is missing');
       }
       
       const course = await courseService.getCourseDetail(courseId);
-      console.log('Course detail loaded:', course);
-      console.log('Course data structure:', {
-        maKhoaHoc: course.maKhoaHoc,
-        tenKhoaHoc: course.tenKhoaHoc,
-        hinhAnh: course.hinhAnh,
-        danhMucKhoaHoc: course.danhMucKhoaHoc,
-        nguoiTao: course.nguoiTao
-      });
       
       setFormData({
         maKhoaHoc: course.maKhoaHoc,
@@ -84,17 +76,11 @@ export default function EditCoursePage() {
       });
 
       if (course.hinhAnh) {
-        console.log('Setting image preview:', course.hinhAnh);
         setImagePreview(course.hinhAnh);
       }
     } catch (error) {
       console.error('Error fetching course detail:', error);
-      const err = error as { response?: { data?: unknown; status?: number }; message?: string };
-      console.error('Error details:', {
-        status: err.response?.status,
-        data: err.response?.data,
-        message: err.message
-      });
+      const err = error as { message?: string };
       
       setNotification({
         show: true,
@@ -204,7 +190,6 @@ export default function EditCoursePage() {
     try {
       if (formData.hinhAnh) {
         // Có ảnh mới - dùng FormData và API upload
-        console.log('Image file:', formData.hinhAnh.name, formData.hinhAnh.size, 'bytes');
         const submitData = new FormData();
         submitData.append('maKhoaHoc', formData.maKhoaHoc);
         submitData.append('biDanh', formData.tenKhoaHoc.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
@@ -218,11 +203,9 @@ export default function EditCoursePage() {
         submitData.append('taiKhoanNguoiTao', formData.taiKhoanNguoiTao);
         submitData.append('File', formData.hinhAnh, formData.hinhAnh.name);
 
-        console.log('Updating course with new image...');
         await courseService.updateCourseWithImage(submitData);
       } else {
         // Không có ảnh mới - dùng JSON và API không upload
-        console.log('No new image selected, using existing image');
         const updateData = {
           maKhoaHoc: formData.maKhoaHoc,
           biDanh: formData.tenKhoaHoc.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
@@ -237,7 +220,6 @@ export default function EditCoursePage() {
           taiKhoanNguoiTao: formData.taiKhoanNguoiTao,
         };
 
-        console.log('Update data:', updateData);
         await courseService.updateCourseWithoutImage(updateData);
       }
       

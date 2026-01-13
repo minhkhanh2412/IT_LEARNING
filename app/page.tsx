@@ -176,7 +176,7 @@ export default function Home() {
                     const imageToShow = hasError || !hasImage ? '/assets/img_error.png' : course.hinhAnh;
                     
                     return (
-                      <Link href={`/courses/${course.maKhoaHoc}`} key={course.maKhoaHoc} className={styles.courseCard}>
+                      <Link href={`/courses/${encodeURIComponent(course.maKhoaHoc)}`} key={course.maKhoaHoc} className={styles.courseCard}>
                         <div className={styles.courseImage}>
                           <Image 
                             src={imageToShow} 

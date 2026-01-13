@@ -150,21 +150,10 @@ export default function AddCoursePage() {
       submitData.append('taiKhoanNguoiTao', formData.taiKhoanNguoiTao);
       
       if (formData.hinhAnh) {
-        console.log('Image file:', formData.hinhAnh.name, formData.hinhAnh.size, 'bytes');
         submitData.append('File', formData.hinhAnh, formData.hinhAnh.name);
-      } else {
-        console.log('WARNING: No image selected!');
       }
 
-      // Log tất cả các entry của FormData
-      console.log('FormData contents:');
-      for (const [key, value] of submitData.entries()) {
-        console.log(`${key}:`, value);
-      }
-
-      console.log('Submitting course data...');
       const result = await courseService.addCourse(submitData);
-      console.log('Course added:', result);
       
       setNotification({
         show: true,

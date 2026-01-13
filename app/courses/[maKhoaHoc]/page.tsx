@@ -13,7 +13,8 @@ import styles from './courseDetail.module.scss';
 export default function CourseDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const maKhoaHoc = params.maKhoaHoc as string;
+  // Decode URL param để xử lý mã khóa học có khoảng trắng hoặc ký tự đặc biệt
+  const maKhoaHoc = decodeURIComponent(params.maKhoaHoc as string);
   
   const [course, setCourse] = useState<{ maKhoaHoc: string; tenKhoaHoc: string; moTa: string; hinhAnh: string; luotXem: number; soLuongHocVien: number; ngayTao: string; danhMucKhoaHoc: { tenDanhMucKhoaHoc: string }; nguoiTao?: { taiKhoan: string; hoTen: string } } | null>(null);
   const [user, setUser] = useState<User | null>(null);

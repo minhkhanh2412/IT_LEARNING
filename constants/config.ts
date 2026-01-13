@@ -52,5 +52,13 @@ export const API_ENDPOINTS = {
     APPROVE_ENROLLMENT: '/api/QuanLyKhoaHoc/GhiDanhKhoaHoc',
     // Hủy ghi danh khóa học
     CANCEL_ENROLLMENT: '/api/QuanLyKhoaHoc/HuyGhiDanh',
+    
+    // API quản lý ghi danh theo người dùng
+    // Lấy danh sách khóa học mà người dùng CHƯA ghi danh
+    GET_USER_COURSES_NOT_ENROLLED: '/api/QuanLyNguoiDung/LayDanhSachKhoaHocChuaGhiDanh',
+    // Lấy danh sách khóa học mà người dùng ĐÃ ghi danh
+    GET_USER_COURSES_ENROLLED: '/api/QuanLyNguoiDung/LayDanhSachKhoaHocDaXetDuyet',
+    // Lấy danh sách khóa học mà người dùng ĐANG CHỜ xét duyệt
+    GET_USER_COURSES_PENDING: '/api/QuanLyNguoiDung/LayDanhSachKhoaHocChoXetDuyet',
   },
 };

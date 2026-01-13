@@ -105,4 +105,57 @@ export const enrollmentService = {
       throw error;
     }
   },
-};
+  /**
+   * =====Quản lý ghi danh theo người dùng (xem các khóa học của 1 user)=====
+   */
+
+  /**
+   * Lấy danh sách khóa học mà người dùng CHƯA ghi danh
+   */
+  getUserCoursesNotEnrolled: async (taiKhoan: string): Promise<{ maKhoaHoc: string; biDanh: string; tenKhoaHoc: string }[]> => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.ENROLLMENT.GET_USER_COURSES_NOT_ENROLLED,
+        { taiKhoan }
+      );
+      console.log('📋 Khóa học người dùng chưa ghi danh:', response.data);
+      return response.data || [];
+    } catch (error) {
+      console.error('❌ Lỗi khi lấy danh sách khóa học chưa ghi danh:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Lấy danh sách khóa học mà người dùng ĐÃ ghi danh (đã được duyệt)
+   */
+  getUserCoursesEnrolled: async (taiKhoan: string): Promise<{ maKhoaHoc: string; tenKhoaHoc: string }[]> => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.ENROLLMENT.GET_USER_COURSES_ENROLLED,
+        { taiKhoan }
+      );
+      console.log('✅ Khóa học người dùng đã ghi danh:', response.data);
+      return response.data || [];
+    } catch (error) {
+      console.error('❌ Lỗi khi lấy danh sách khóa học đã ghi danh:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Lấy danh sách khóa học mà người dùng ĐANG CHỜ xét duyệt
+   */
+  getUserCoursesPending: async (taiKhoan: string): Promise<{ maKhoaHoc: string; tenKhoaHoc: string }[]> => {
+    try {
+      const response = await axiosInstance.post(
+        API_ENDPOINTS.ENROLLMENT.GET_USER_COURSES_PENDING,
+        { taiKhoan }
+      );
+      console.log('⏳ Khóa học người dùng chờ xét duyệt:', response.data);
+      return response.data || [];
+    } catch (error) {
+      console.error('❌ Lỗi khi lấy danh sách khóa học chờ xét duyệt:', error);
+      throw error;
+    }
+  },};

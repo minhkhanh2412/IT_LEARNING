@@ -17,11 +17,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showCoursesModal, setShowCoursesModal] = useState(false);
   const [deletingUser, setDeletingUser] = useState<{ taiKhoan: string; hoTen: string } | null>(null);
-  const [viewingUser, setViewingUser] = useState<{ taiKhoan: string; hoTen: string } | null>(null);
-  const [userCourses, setUserCourses] = useState<Array<{ maKhoaHoc: string; tenKhoaHoc: string; hinhAnh: string }>>([]);
-  const [loadingCourses, setLoadingCourses] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -130,25 +126,10 @@ export default function AdminUsersPage() {
     setDeletingUser(null);
   };
 
-  const handleViewCourses = async (user: User) => {
-    setViewingUser({ taiKhoan: user.taiKhoan, hoTen: user.hoTen });
-    setShowCoursesModal(true);
-    setLoadingCourses(true);
-    try {
-      const courses = await userService.getUserCourses(user.taiKhoan);
-      setUserCourses(courses);
-    } catch (error) {
-      console.error('Error fetching user courses:', error);
-      setUserCourses([]);
-    } finally {
-      setLoadingCourses(false);
-    }
-  };
-
-  const closeCoursesModal = () => {
-    setShowCoursesModal(false);
-    setViewingUser(null);
-    setUserCourses([]);
+  const handleViewCourses = (user: User) => {
+    // Navigate đến trang quản lý khóa học của người dùng
+    // Encode taiKhoan để xử lý ký tự đặc biệt và khoảng trắng
+    router.push(`/admin/users/courses/${encodeURIComponent(user.taiKhoan)}`);
   };
 
   const handleOpenAddModal = () => {
@@ -604,61 +585,6 @@ export default function AdminUsersPage() {
                 onClick={() => setNotification({ show: false, title: '', message: '', type: 'success' })} 
                 className={notification.type === 'success' ? styles.confirmBtn : styles.cancelBtn}
               >
-                Đóng
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Courses Modal */}
-      {showCoursesModal && (
-        <div className={styles.modalOverlay}>
-          <div className={`${styles.modalContent} ${styles.coursesModal}`}>
-            <div className={styles.modalIcon}>📚</div>
-            <h3 className={styles.modalTitle}>Khóa học đã đăng ký</h3>
-            {viewingUser && (
-              <p className={styles.modalUserName}>
-                Người dùng: <strong>{viewingUser.hoTen}</strong> ({viewingUser.taiKhoan})
-              </p>
-            )}
-            
-            {loadingCourses ? (
-              <div className={styles.loadingCourses}>Đang tải...</div>
-            ) : (
-              <>
-                {userCourses.length === 0 ? (
-                  <p className={styles.noCourses}>Người dùng chưa đăng ký khóa học nào</p>
-                ) : (
-                  <div className={styles.coursesList}>
-                    <table className={styles.coursesTable}>
-                      <thead>
-                        <tr>
-                          <th>STT</th>
-                          <th>Mã khóa học</th>
-                          <th>Tên khóa học</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {userCourses.map((course, index) => (
-                          <tr key={course.maKhoaHoc || index}>
-                            <td>{index + 1}</td>
-                            <td>{course.maKhoaHoc}</td>
-                            <td>{course.tenKhoaHoc}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    <p className={styles.totalCourses}>
-                      Tổng số: <strong>{userCourses.length}</strong> khóa học
-                    </p>
-                  </div>
-                )}
-              </>
-            )}
-            
-            <div className={styles.modalActions}>
-              <button onClick={closeCoursesModal} className={styles.confirmBtn}>
                 Đóng
               </button>
             </div>

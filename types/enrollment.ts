@@ -39,3 +39,10 @@ export interface EnrollmentResponse {
   message?: string;
   statusCode?: number;
 }
+
+// Khóa học của người dùng (dùng cho trang quản lý theo user)
+export interface UserCourse {
+  maKhoaHoc: string;
+  tenKhoaHoc: string;
+  biDanh?: string;
+}

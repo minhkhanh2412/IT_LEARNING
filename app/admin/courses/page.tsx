@@ -93,18 +93,15 @@ export default function AdminCoursesPage() {
 
   const confirmDelete = async () => {
     try {
-      console.log('Deleting course:', deleteModal.courseId);
-      
       // Kiểm tra token
       const token = localStorage.getItem('ACCESS_TOKEN');
-      console.log('Token exists:', !!token);
       
       await courseService.deleteCourse(deleteModal.courseId);
       setDeleteModal({ show: false, courseId: '', courseName: '' });
       
       setNotification({
         show: true,
-        title: 'Xóa thành công! ✅',
+        title: 'Xóa thành công! ',
         message: 'Khóa học đã được xóa khỏi hệ thống.',
         type: 'success'
       });
@@ -232,7 +229,7 @@ export default function AdminCoursesPage() {
                             <EyeOutlined /> 
                           </button>
                           <Link 
-                            href={`/admin/courses/edit/${course.maKhoaHoc}`} 
+                            href={`/admin/courses/edit/${encodeURIComponent(course.maKhoaHoc)}`} 
                             className={styles.editBtn}
                             title="Chỉnh sửa khóa học"
                           >
