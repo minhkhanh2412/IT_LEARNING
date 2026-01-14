@@ -37,8 +37,7 @@ function CoursesContent() {
     // Lọc courses theo search query
     if (searchQuery) {
       const filtered = courses.filter(course =>
-        course.tenKhoaHoc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        course.moTa?.toLowerCase().includes(searchQuery.toLowerCase())
+        course.tenKhoaHoc.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredCourses(filtered);
     } else {

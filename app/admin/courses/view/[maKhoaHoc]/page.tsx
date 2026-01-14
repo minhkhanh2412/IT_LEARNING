@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeftOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, SearchOutlined, UserOutlined, CloseOutlined } from '@ant-design/icons';
 import Sidebar from '@/components/Sidebar';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { enrollmentService } from '@/services/enrollmentService';
@@ -325,6 +325,15 @@ export default function CourseEnrollmentPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={styles.searchInput}
               />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className={styles.clearButtonUnique}
+                >
+                  <CloseOutlined />
+                </button>
+              )}
             </div>
 
             {/* SECTION 1: Đã ghi danh */}

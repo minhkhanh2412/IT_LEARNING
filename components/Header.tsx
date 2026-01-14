@@ -12,7 +12,8 @@ import {
   DownOutlined,
   SunOutlined,
   MoonOutlined,
-  SearchOutlined
+  SearchOutlined,
+  CloseOutlined
 } from '@ant-design/icons';
 import { User } from '@/types/user';
 import styles from './Header.module.scss';
@@ -116,6 +117,8 @@ export default function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/courses?search=${encodeURIComponent(searchQuery)}`);
+    } else {
+      router.push('/courses');
     }
   };
 
@@ -143,10 +146,22 @@ export default function Header() {
         <input 
           type="text" 
           className={styles.searchInput}
-          placeholder="Tìm kiếm khóa học"
+          placeholder="Tìm kiếm theo tên khóa học"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+        {searchQuery && (
+          <button 
+            type="button" 
+            className={styles.clearButton}
+            onClick={() => {
+              setSearchQuery('');
+              router.push('/courses');
+            }}
+          >
+            <CloseOutlined />
+          </button>
+        )}
         <button type="submit" className={styles.searchButton}>
           <SearchOutlined />
         </button>
